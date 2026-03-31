@@ -5,10 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Sabrina Novaes">
-    <meta name="description"
-        content="Aplicação de previsão do tempo que permite aos usuários consultar as condições climáticas atuais e futuras para qualquer cidade do mundo. A interface é simples e intuitiva, oferecendo informações detalhadas sobre temperatura, umidade, vento e condições meteorológicas.">
+    <meta name="description" content="Aplicação de previsão do tempo que permite aos usuários consultar as condições climáticas atuais 
+        para qualquer cidade do mundo. A interface é simples e intuitiva, oferecendo informações 
+        detalhadas sobre temperatura, hórarios local e condições meteorológicas.">
     <meta name="robots" content="index, follow">
-    
+
     <!-- Ícones de clima -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
     <!-- Estilo CSS -->
@@ -30,10 +31,27 @@
         <div id="result" class="weather-result" aria-live="polite"></div>
 
         <!-- Botão Home -->
-        <button id="home-btn" class="home-btn">
-            <i class="wi wi-home"></i>
+        <button id="home-btn" class="home-btn" aria-label="Voltar para o início">
+            <img class="home-icon" src="https://img.icons8.com/material-outlined/24/home--v2.png" alt="Ícone home" />
         </button>
     </main>
+
+    <footer class="footer">
+        <p class="footer-copy">
+            © 2026 Sabrina Novaes — Todos os direitos reservados
+        </p>
+
+        <p class="footer-apis">
+            Dados fornecidos por
+            <a href="https://open-meteo.com/en/docs" target="_blank">
+                Open-Meteo API
+            </a>
+            e
+            <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank">
+                Geocoding API
+            </a>
+        </p>
+    </footer>
 
     <script src="api.js"></script>
 </body>

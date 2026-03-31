@@ -1,9 +1,9 @@
 
 /* RESET */
 * {
-    box-sizing: border-box;
-    border: none;
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 :root {
@@ -151,6 +151,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column; /* 🔥 importante */
 
     color: var(--text);
     transition: all 0.3s ease;
@@ -295,8 +296,8 @@ h1 {
     top: 15px;
     left: 15px;
 
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
 
     border-radius: 50%;
     border: none;
@@ -310,18 +311,91 @@ h1 {
 
     cursor: pointer;
 
-    box-shadow: 0 4px 12px var(--shadow);
-    transition: 0.2s ease;
+    box-shadow: 0 6px 18px var(--shadow);
+    transition: all 0.25s ease;
+
+    /* ✨ animação inicial */
+    animation: float 3s ease-in-out infinite;
 }
 
-.home-btn i {
-    font-size: 1.3rem;
+/* 🏠 ícone */
+.home-icon {
+    font-size: 1.4rem;
+    transition: transform 0.2s ease;
 }
 
+/* ✨ hover */
 .home-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.15) rotate(5deg);
     background: var(--primary);
     color: var(--text-light);
+}
+
+/* 💥 clique */
+.home-btn:active {
+    transform: scale(0.95);
+}
+
+/* 🏠 animação do ícone */
+.home-btn:hover .home-icon {
+    transform: scale(1.2);
+}
+
+/* 🌌 glow no dark */
+[data-theme="dark"] .home-btn {
+    box-shadow:
+        0 0 10px rgba(167, 139, 250, 0.6),
+        0 0 20px rgba(34, 211, 238, 0.4);
+}
+
+/* 🌊 efeito flutuante */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+/* FOOTER */
+.footer {
+    margin-top: 1.5rem;
+    padding: 1rem;
+
+    text-align: center;
+    font-size: 0.8rem;
+
+    border-top: 1px solid var(--border);
+    color: var(--text-soft);
+
+    width: 100%;
+    max-width: 420px;
+}
+
+/* links */
+.footer a {
+    color: var(--secondary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* dark mode ajuste */
+[data-theme="dark"] .footer {
+    border-top: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.forecast {
+    margin-top: 1rem;
+}
+
+.forecast-item {
+    display: flex;
+    justify-content: space-between;
 }
 
 /* RESPONSIVO */

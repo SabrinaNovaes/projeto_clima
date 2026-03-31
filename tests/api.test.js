@@ -1,82 +1,96 @@
-// tests/api.test.js
+/**
+ * @jest-environment jsdom
+ * @fileoverview Testes unitários reais do módulo de clima.
+ * O código original permanece intocado. Lemos o arquivo dinamicamente para contornar problemas sintáticos do Node.js.
+ */
+const fs = require("fs");
+const path = require("path");
 
-// Criando a função mock diretamente
-const buscarClima = jest.fn();
+// 1. INICIALIZAÇÃO DO DOM (No escopo global)
+document.body.innerHTML = `
+    <form id="weather-form"></form>
+    <input type="text" id="city-input" />
+    <div id="result"></div>
+    <button id="home-btn"></button>
+`;
 
-// Funções helpers para reduzir repetição
-const mockSuccess = (dados) => buscarClima.mockResolvedValueOnce(dados);
-const mockError = (mensagem) => buscarClima.mockRejectedValueOnce(new Error(mensagem));
+// 2. Extraindo o código e removendo dinamicamente a palavra 'export' para não quebrar o Node CommonJS
+const apiPath = path.resolve(__dirname, "../api.js");
+let apiCode = fs.readFileSync(apiPath, "utf-8");
+apiCode = apiCode.replace(/export\s+\{([^>]*)\};/, "");
 
-describe("Testes da função buscarClima com mock (otimizado)", () => {
-    const cidades = {
-        valida: "Rio de Janeiro",
-        inexistente: "CidadeInexistente",
-        vazia: "",
-        lenta: "São Paulo",
-        formato: "Belo Horizonte",
-    };
+// 3. Avaliando o script de forma isolada dentro do ambiente JSDOM
+eval(apiCode);
+// As funções originais (validarCidade, getCoordinates, getWeather) agora existem no escopo global.
 
-    beforeEach(() => {
+describe("Testes Básicos da Consulta de Clima", () => {
+    
+    beforeAll(() => {
+        // Mock do localStorage adicionado pelo usuário
+        global.localStorage = {
+            store: {},
+            getItem(key) { return this.store[key] || null; },
+            setItem(key, value) { this.store[key] = value; },
+            removeItem(key) { delete this.store[key]; }
+        };
+    });
+
+    afterEach(() => {
         jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
+    // 1. Nome de cidade válido retorna dados meteorológicos.
     test("Nome de cidade válido retorna dados meteorológicos", async () => {
-        const dadosMock = { temperatura: 28, descricao: "Ensolarado" };
-        mockSuccess(dadosMock);
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    results: [{ latitude: -22.9, longitude: -43.2, name: "Rio de Janeiro", country: "Brasil" }]
+                })
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    current_weather: { temperature: 28, weathercode: 0, is_day: 1, time: "2026-03-31T12:00" }
+                })
+            });
 
-        const resultado = await buscarClima(cidades.valida);
-        expect(resultado).toEqual(dadosMock);
-        expect(buscarClima).toHaveBeenCalledTimes(1);
-        expect(buscarClima).toHaveBeenCalledWith(cidades.valida);
+        expect(() => validarCidade("Rio de Janeiro")).not.toThrow();
+
+        const location = await getCoordinates("Rio de Janeiro");
+        expect(location.name).toBe("Rio de Janeiro");
+        
+        const weather = await getWeather(location.latitude, location.longitude);
+        expect(weather.temperature).toBe(28);
+        expect(weather.weathercode).toBe(0);
+
+        expect(global.fetch).toHaveBeenCalledTimes(2);
     });
 
+    // 2. Nome de cidade inexistente lança exceção tratada.
     test("Nome de cidade inexistente lança exceção tratada", async () => {
-        mockError("Cidade não encontrada");
+        global.fetch = jest.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({ results: undefined }) 
+        });
 
-        await expect(buscarClima(cidades.inexistente)).rejects.toThrow("Cidade não encontrada");
-        expect(buscarClima).toHaveBeenCalledWith(cidades.inexistente);
+        await expect(getCoordinates("CidadeInexistente")).rejects.toThrow("Cidade não encontrada.");
+        expect(global.fetch).toHaveBeenCalledTimes(1);
     });
 
-    test("Entrada vazia retorna erro de validação", async () => {
-        mockError("Nome da cidade é obrigatório");
-
-        await expect(buscarClima(cidades.vazia)).rejects.toThrow("Nome da cidade é obrigatório");
-        expect(buscarClima).toHaveBeenCalledWith(cidades.vazia);
+    // 3. Entrada vazia retorna erro de validação.
+    test("Entrada vazia retorna erro de validação", () => {
+        expect(() => validarCidade("")).toThrow("Digite o nome de uma cidade.");
+        expect(() => validarCidade("   ")).toThrow("Digite o nome de uma cidade.");
     });
 
-    test("Falha da API gera resposta adequada", async () => {
-        mockError("Erro de comunicação com a API");
+    // 4. Falha da API gera resposta adequada (timeout ou erro).
+    test("Falha da API gera resposta adequada (erro de rede/timeout)", async () => {
+        global.fetch = jest.fn().mockRejectedValue(new Error("Timeout/Falha na API"));
 
-        await expect(buscarClima(cidades.lenta)).rejects.toThrow("Erro de comunicação com a API");
-        expect(buscarClima).toHaveBeenCalledWith(cidades.lenta);
-    });
-
-    test("Limite de requisições da API excedido", async () => {
-        mockError("Limite de requisições excedido");
-
-        await expect(buscarClima(cidades.valida)).rejects.toThrow("Limite de requisições excedido");
-        expect(buscarClima).toHaveBeenCalledWith(cidades.valida);
-    });
-
-    test("Conexão de rede lenta/instável", async () => {
-        // Simula delay na resposta
-        buscarClima.mockImplementationOnce(() =>
-            new Promise((resolve) =>
-                setTimeout(() => resolve({ temperatura: 30, descricao: "Nublado" }), 3000)
-            )
-        );
-
-        const resultado = await buscarClima(cidades.lenta);
-        expect(resultado).toEqual({ temperatura: 30, descricao: "Nublado" });
-        expect(buscarClima).toHaveBeenCalledWith(cidades.lenta);
-    });
-
-    test("Mudança inesperada no formato da resposta JSON", async () => {
-        mockSuccess({ temp: 25, desc: "Chuvoso" });
-
-        const resultado = await buscarClima(cidades.formato);
-        expect(resultado).not.toHaveProperty("temperatura");
-        expect(resultado).toHaveProperty("temp");
-        expect(buscarClima).toHaveBeenCalledWith(cidades.formato);
+        // Garante que o método assíncrono joga a exceção mapeada para falha de rede da API original
+        await expect(getCoordinates("São Paulo")).rejects.toThrow("Erro de conexão ao buscar coordenadas.");
+        expect(global.fetch).toHaveBeenCalledTimes(1);
     });
 });
