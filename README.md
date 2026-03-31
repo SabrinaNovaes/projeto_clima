@@ -147,6 +147,12 @@ start docs/index.html
 
 <hr>
 
+## 🌐 Deploy
+```bash
+https://sabrinanovaes.github.io/projeto_clima/
+```
+<hr>
+
 ## 🔮 Melhorias futuras
 🔎 Autocomplete de cidades <br>
 📱 Responsividade mobile <br>
