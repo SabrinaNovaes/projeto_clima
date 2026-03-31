@@ -140,6 +140,11 @@ start docs/index.html
 
 <hr>
 
+## 🌐 Deploy
+```bash
+https://sabrinanovaes.github.io/projeto_clima/
+```
+
 ## 🔮 Melhorias futuras
 🔎 Autocomplete de cidades <br>
 📅 Previsão de 7 dias <br>
