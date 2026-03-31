@@ -75,6 +75,12 @@ Acelerador visual de "Acordeão": Mostra chuvas e ventos detalhados ao expandir 
 🌙 Escuro (noite)
 ```
 
+✔️ Experiência Mobile First e Layout Responsivo Inteligente:
+```
+Otimização garantida para celulares de telas estreitas, como iPhone SE
+Interface fluida em CSS Flex/Grid
+```
+
 ✔️ Tratamento de erros:
 ```
 Cidade não encontrada
@@ -147,15 +153,8 @@ start docs/index.html
 
 <hr>
 
-## 🌐 Deploy
-```bash
-https://sabrinanovaes.github.io/projeto_clima/
-```
-<hr>
-
 ## 🔮 Melhorias futuras
 🔎 Autocomplete de cidades <br>
-📱 Responsividade mobile <br>
 ⚡ Evolução do LocalStorage para IndexedDB <br> 
 
 <hr>
@@ -179,4 +178,18 @@ Enviar pull requests <br>
 
 ## 📜 Licença
 
-Este projeto está sob a licença MIT.
+Este projeto está licenciado sob a licença **MIT**.
+
+Os dados meteorológicos utilizados são fornecidos por **Open-Meteo** e estão sob a licença
+**Creative Commons Attribution 4.0 International (CC BY 4.0)**.
+
+### 📌 Atribuição obrigatória
+
+**🇧🇷 Português (Brasil):**
+Dados meteorológicos por Open-Meteo (https://open-meteo.com/)
+Licenciado sob CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
+
+**🇺🇸 English:**
+Weather data by Open-Meteo (https://open-meteo.com/)
+Licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
+

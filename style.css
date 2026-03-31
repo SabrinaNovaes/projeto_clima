@@ -473,11 +473,95 @@ body.result-shown .home-btn {
 }
 
 /* FOOTER */
-.footer { display: none; }
+.footer { 
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    text-align: center;
+    color: var(--text-soft); 
+    font-size: 0.75rem;
+    line-height: 1.5;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 420px;
+}
+.footer a {
+    color: var(--text);
+    font-weight: bold;
+    text-decoration: none;
+    border-bottom: 1px solid var(--text);
+}
+.footer a:hover {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+[data-theme="dark"] .footer {
+    color: var(--text-soft);
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+[data-theme="dark"] .footer a {
+    color: var(--text-light);
+    border-bottom-color: var(--text-light);
+}
 
 /* RESPONSIVO */
 @media (max-width: 480px) {
-    .container { padding: 1.5rem; }
+    .container { 
+        padding: 1.5rem; 
+        max-width: 100%;
+        margin: 0.5rem;
+    }
+    
     .weather-form { flex-direction: column; }
     .weather-form button { width: 100%; }
+
+    /* Ajustes para o bloco principal de clima */
+    .hero-banner {
+        padding: 1rem;
+        gap: 1rem;
+    }
+    .hero-icon { font-size: 3rem; }
+    .curr-temp { font-size: 2.8rem; }
+    
+    .city-name { font-size: 1.2rem; }
+    .date { margin-bottom: 1rem; }
+
+    /* Ajustes para Mínimas e Máximas Atuais */
+    .today-max-min {
+        width: 100%;
+        padding: 0.8rem;
+    }
+    .today-max-min .val { font-size: 1.25rem; }
+
+    /* Ajuste para Vento/Umidade/Chuva para não apertar textos */
+    .extra-variables {
+        gap: 0.5rem;
+    }
+    .var-box {
+        padding: 0.8rem 0.2rem;
+    }
+    .var-box i { font-size: 1.2rem; }
+    .var-box .v-label { font-size: 0.55rem; }
+    .var-box .v-val { font-size: 0.8rem; }
+
+    /* Previsão Lista Múltipla */
+    .f-main {
+        padding: 0.6rem 0.6rem;
+    }
+    .f-date strong { font-size: 0.75rem; }
+    .f-icon i { font-size: 1.3rem; }
+    .f-temp { font-size: 0.8rem; }
+}
+
+/* Telas muito fininhas (ex: 320px iPhone SE) */
+@media (max-width: 360px) {
+    .extra-variables {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    .var-box {
+        flex-direction: row;
+        justify-content: space-evenly;
+        padding: 0.5rem;
+    }
+    .var-box i { margin-bottom: 0; }
 }
