@@ -1,0 +1,24 @@
+{
+  "name": "nova-pasta",
+  "version": "1.0.0",
+  "description": "",
+  "main": "api.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SabrinaNovaes/projeto_clima.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SabrinaNovaes/projeto_clima/issues"
+  },
+  "homepage": "https://github.com/SabrinaNovaes/projeto_clima#readme",
+  "devDependencies": {
+    "jest": "^30.3.0"
+  }
+}
