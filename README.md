@@ -1,131 +1,171 @@
-🌤️ Projeto Clima
+# 🌤️ Projeto Clima
 
 
-📖 Sobre o projeto
+## 📖 Descrição
 
-O Projeto Clima é uma aplicação web que permite consultar o clima atual de qualquer cidade de forma simples e rápida.
+O Projeto Clima é uma aplicação web que permite consultar o clima atual de qualquer cidade usando APIs externas (Open-Meteo e Geocoding).
 
-A aplicação consome APIs externas para obter:
+O sistema:
 
-📍 Coordenadas da cidade
-🌡️ Temperatura atual
-🌦️ Condições meteorológicas
-🕒 Data e horário local
+- Valida o nome da cidade informado pelo usuário.
+- Obtém coordenadas geográficas da cidade.
+- Consulta o clima atual, incluindo temperatura, condição meteorológica e código de clima.
+- Alterna o tema da página entre claro e escuro dependendo do horário (dia/noite).
+- Exibe mensagens de erro amigáveis caso ocorra algum problema.
+- Possui fallbacks para cenários em que a API retorna campos inesperados.
 
-Além disso, o sistema conta com:
+<hr>
 
-🌙 Tema dinâmico (dia/noite)
-⚠️ Tratamento de erros
-🧪 Testes automatizados com Jest
-🎬 Demonstração
+## 📁 Estrutura do projeto
 
-🚀 Funcionalidades
+```
+📦 projeto-clima
+|  ┣ 📄 index.html
+|  ┣ 📄 style.css
+|  ┣ 📄 api.js
+|  ┣ 📄 package.json
+|  ┣ 📄 jsdoc.json
+|  ┣ 📁 tests
+|  ┃ ┗ 📄 api.test.js
+|  ┗ 📁 docs
+```
+<hr>
 
-✔️ Buscar clima por nome da cidade
-✔️ Validação de entrada do usuário
+## 🛠 Tecnologias Utilizadas
+
+<div>
+<img width="48" height="48" src="https://img.icons8.com/color/48/javascript--v1.png" alt="javascript--v1"/>
+<img width="48" height="48" src="https://img.icons8.com/color/48/html-5--v1.png" alt="html-5--v1"/>
+<img width="48" height="48" src="https://img.icons8.com/color/48/css3.png" alt="css3"/>
+<img width="48" height="48" src="https://img.icons8.com/external-tal-revivo-color-tal-revivo/24/external-jest-can-collect-code-coverage-information-from-entire-projects-logo-color-tal-revivo.png" alt="external-jest-can-collect-code-coverage-information-from-entire-projects-logo-color-tal-revivo"/>
+<img width="48" height="48" src="https://img.icons8.com/color/48/doc.png" alt="doc"/>
+</div>
+
+<hr>
+
+## APIs:
+Open-Meteo |
+Geocoding API
+
+<hr>
+
+## 🚀 Funcionalidades
+
+✔️ Buscar clima por nome da cidade <br>
+✔️ Validação de entrada do usuário <br>
 ✔️ Exibição de card com:
-
+```
 Cidade e país
 Temperatura
 Descrição do clima
 Ícone meteorológico
 Data e hora local
+```
 
 ✔️ Tema automático:
-
+```
 🌞 Claro (dia)
 🌙 Escuro (noite)
+```
 
 ✔️ Tratamento de erros:
-
+```
 Cidade não encontrada
 Erro de conexão
 Dados inválidos
+```
 
-✔️ Cache simples para evitar requisições repetidas
-
+✔️ Cache simples para evitar requisições repetidas <br>
 ✔️ Testes automatizados com Jest
 
-🛠️ Tecnologias
-JavaScript (ES6+)
-HTML5
-CSS3
-Jest (testes)
-JSDoc (documentação)
-APIs:
-Open-Meteo
-Geocoding API
-📁 Estrutura do projeto
-📦 projeto-clima
- ┣ 📄 index.html
- ┣ 📄 style.css
- ┣ 📄 api.js
- ┣ 📄 package.json
- ┣ 📄 jsdoc.json
- ┣ 📁 tests
- ┃ ┗ 📄 api.test.js
- ┗ 📁 docs
-⚙️ Como rodar o projeto
+<hr>
+
+## ⚙️ Como rodar o projeto
+
 🔹 1. Clone o repositório
-git clone https://github.com/SabrinaNovaes/projeto_clima.git
+git clone 
+```bash
+https://github.com/SabrinaNovaes/projeto_clima.git
+```
 🔹 2. Acesse a pasta
+```bash
 cd projeto_clima
+```
 🔹 3. Instale as dependências
+```bash
 npm install
+```
 🔹 4. Abra no navegador
+```bash
 index.html
-🧪 Rodando os testes
+```
+
+<hr>
+
+## 🧪 Rodando os testes
 
 Os testes foram implementados utilizando Jest, com foco em cenários reais e casos extremos.
 
 ▶️ Executar testes
-npm test
-📌 Cenários testados
-✅ Cidade válida retorna dados
-❌ Cidade inexistente retorna erro
-⚠️ Entrada vazia (validação)
-🌐 Falha de API
-🚫 Limite de requisições excedido
-🐢 Conexão lenta
-🔄 Mudança inesperada no JSON
-📄 Documentação (JSDoc)
-Gerar documentação:
+```bash
+npm teste
+```
+
+## 📌 Cenários testados
+
+✅ Cidade válida retorna dados <br>
+❌ Cidade inexistente retorna erro <br>
+⚠️ Entrada vazia (validação) <br>
+🌐 Falha de API <br>
+🚫 Limite de requisições excedido <br>
+🐢 Conexão lenta <br>
+🔄 Mudança inesperada no JSON <br>
+
+<hr> 
+
+## 📄 Documentação (JSDoc)
+
+🔹 Gerar documentação:
+```bash
 npm run docs
-Abrir documentação:
+```
+🔹 Abrir documentação:
+```bash
 start docs/index.html
-💡 Exemplo de uso
-const cidade = "Rio de Janeiro";
+```
+<hr> 
 
-try {
-    validarCidade(cidade);
-    const location = await getCoordinates(cidade);
-    const weather = await getWeather(location.latitude, location.longitude);
+## 💡 Exemplo de uso
 
-    const descricao = getWeatherDescription(weather.weathercode);
-    
-    console.log(`${descricao} - ${weather.temperature}°C`);
-} catch (error) {
-    console.error(error.message);
-}
-🔮 Melhorias futuras
-🔎 Autocomplete de cidades
-📅 Previsão de 7 dias
-📱 Responsividade mobile
-⚡ Cache com expiração
-🎨 Animações avançadas
-👩‍💻 Autora
 
-Sabrina Oliveira
-💻 Desenvolvedora Fullstack em formação
+<hr>
 
+## 🔮 Melhorias futuras
+🔎 Autocomplete de cidades <br>
+📅 Previsão de 7 dias <br>
+📱 Responsividade mobile <br>
+⚡ Cache com expiração <br> 
+🎨 Animações avançadas <br> 
+
+<hr>
+
+## 👩‍💻 Autora
+
+Sabrina Novaes <br>
+💻 Desenvolvedora Fullstack <br>
+Linkkedin: https://www.linkedin.com/in/sabrina-novaes/ <br>
 GitHub: https://github.com/SabrinaNovaes
-⭐ Contribuição
+
+<hr> 
+
+## ⭐ Contribuição
 
 Sinta-se à vontade para:
 
-Abrir issues
-Sugerir melhorias
-Enviar pull requests
-📜 Licença
+Abrir issues <br>
+Sugerir melhorias <br>
+Enviar pull requests <br> 
+
+## 📜 Licença
 
 Este projeto está sob a licença MIT.
