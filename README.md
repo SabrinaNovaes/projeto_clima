@@ -115,7 +115,7 @@ Os testes foram implementados utilizando Jest, com foco em cenários reais e cas
 
 ▶️ Executar testes
 ```bash
-npm teste
+npm test
 ```
 
 ## 📌 Cenários testados
