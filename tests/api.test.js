@@ -24,7 +24,7 @@ eval(apiCode);
 // As funções originais (validarCidade, getCoordinates, getWeather) agora existem no escopo global.
 
 describe("Testes Básicos da Consulta de Clima", () => {
-    
+
     beforeAll(() => {
         // Mock do localStorage adicionado pelo usuário
         global.localStorage = {
@@ -52,7 +52,23 @@ describe("Testes Básicos da Consulta de Clima", () => {
             .mockResolvedValueOnce({
                 ok: true,
                 json: async () => ({
-                    current_weather: { temperature: 28, weathercode: 0, is_day: 1, time: "2026-03-31T12:00" }
+                    current: { 
+                        time: "2026-03-31T12:00",
+                        temperature_2m: 28, 
+                        relative_humidity_2m: 75,
+                        precipitation: 0.0,
+                        wind_speed_10m: 12.5,
+                        weather_code: 0, 
+                        is_day: 1 
+                    },
+                    daily: { 
+                        time: ["2026-03-31", "2026-04-01", "2026-04-02"],
+                        temperature_2m_max: [30, 31, 29],
+                        temperature_2m_min: [22, 23, 21],
+                        precipitation_sum: [0.0, 5.0, 2.0],
+                        wind_speed_10m_max: [15, 20, 10],
+                        weathercode: [0, 1, 2]
+                    }
                 })
             });
 
@@ -61,10 +77,11 @@ describe("Testes Básicos da Consulta de Clima", () => {
         const location = await getCoordinates("Rio de Janeiro");
         expect(location.name).toBe("Rio de Janeiro");
         
-        const weather = await getWeather(location.latitude, location.longitude);
-        expect(weather.temperature).toBe(28);
-        expect(weather.weathercode).toBe(0);
-
+        const weatherData = await getWeather(location.latitude, location.longitude);
+        expect(weatherData.current.temperature_2m).toBe(28);
+        expect(weatherData.current.weather_code).toBe(0);
+        expect(weatherData.current.relative_humidity_2m).toBe(75);
+        expect(weatherData.daily.precipitation_sum[1]).toBe(5.0);
         expect(global.fetch).toHaveBeenCalledTimes(2);
     });
 
@@ -72,7 +89,7 @@ describe("Testes Básicos da Consulta de Clima", () => {
     test("Nome de cidade inexistente lança exceção tratada", async () => {
         global.fetch = jest.fn().mockResolvedValue({
             ok: true,
-            json: async () => ({ results: undefined }) 
+            json: async () => ({ results: undefined })
         });
 
         await expect(getCoordinates("CidadeInexistente")).rejects.toThrow("Cidade não encontrada.");
@@ -92,5 +109,28 @@ describe("Testes Básicos da Consulta de Clima", () => {
         // Garante que o método assíncrono joga a exceção mapeada para falha de rede da API original
         await expect(getCoordinates("São Paulo")).rejects.toThrow("Erro de conexão ao buscar coordenadas.");
         expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    // 5. Teste de lógica de Cache Integrado.
+    test("Armazenar e ler valores do Cache sem acionar fetch redundante", () => {
+        const testCity = "cachedcity";
+        const testData = {
+            location: { name: "MockName" },
+            weather: {
+                current: { temperature_2m: 20 },
+                daily: { temperature_2m_max: [25] }
+            }
+        };
+
+        // Salva mock diretamente passando pela flag global
+        setCache(testCity, testData);
+
+        // A tentativa de ler a cidade deve recuperar os dados corretamente ignorando uppercase
+        const cacheHit = getCache("CachedCITY");
+        
+        expect(cacheHit).not.toBeNull();
+        expect(cacheHit.location.name).toBe("MockName");
+        expect(cacheHit.weather.current.temperature_2m).toBe(20);
+        expect(cacheHit.weather.daily.temperature_2m_max[0]).toBe(25);
     });
 });

@@ -85,16 +85,16 @@ async function getCoordinates(city) {
 }
 
 /**
- * Obtém o clima atual de uma latitude e longitude.
+ * Obtém o clima atual da Open-Meteo incluindo dados extras e dados diários.
  *
  * @async
  * @param {number} latitude
  * @param {number} longitude
- *  * @returns {Promise<{latitude: number, longitude: number, name: string, country: string}>}
+ * @returns {Promise<{current: Object, daily: Object}>}
  * @throws {Error} Se a conexão falhar, resposta inválida ou dados indisponíveis.
  */
 async function getWeather(latitude, longitude) {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&temperature_unit=celsius&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code,is_day&timezone=auto&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max`;
     let res;
     try {
         res = await fetch(url);
@@ -111,9 +111,60 @@ async function getWeather(latitude, longitude) {
         throw new Error('Resposta inválida da API de clima.');
     }
 
-    if (!data.current_weather) throw new Error('Dados meteorológicos indisponíveis.');
+    if (!data.current || !data.daily) throw new Error('Dados meteorológicos indisponíveis.');
 
-    return data.current_weather;
+    return {
+        current: data.current,
+        daily: data.daily
+    };
+}
+
+// ===============================
+// CACHE
+// ===============================
+
+/**
+ * Tempo de validade do cache (10 minutos)
+ * @type {number}
+ */
+const CACHE_DURATION = 10 * 60 * 1000;
+
+/**
+ * Obtém dados do cache.
+ * @param {string} city
+ * @returns {Object|null}
+ */
+function getCache(city) {
+    const key = city.toLowerCase();
+    const cached = localStorage.getItem(key);
+
+    if (!cached) return null;
+
+    const parsed = JSON.parse(cached);
+    const isExpired = Date.now() - parsed.timestamp > CACHE_DURATION;
+
+    if (isExpired) {
+        localStorage.removeItem(key);
+        return null;
+    }
+
+    return parsed.data;
+}
+
+/**
+ * Salva dados no cache.
+ * @param {string} city
+ * @param {Object} data
+ */
+function setCache(city, data) {
+    const key = city.toLowerCase();
+
+    const payload = {
+        data,
+        timestamp: Date.now()
+    };
+
+    localStorage.setItem(key, JSON.stringify(payload));
 }
 
 /**
@@ -228,30 +279,139 @@ form.addEventListener('submit', async (event) => {
 
     try {
         validarCidade(city);
-        result.textContent = 'Buscando clima...';
 
-        const location = await getCoordinates(city);
-        const weather = await getWeather(location.latitude, location.longitude);
+        let location, weatherData;
+        const cachedData = getCache(city);
 
-        const description = getWeatherDescription(weather.weathercode);
-        const icon = getWeatherIcon(weather.weathercode);
+        // Verifica compatibilidade de cache para não dar erro com caches do passado
+        if (cachedData && cachedData.weather && cachedData.weather.current !== undefined) {
+            location = cachedData.location;
+            weatherData = cachedData.weather;
+        } else {
+            result.textContent = 'Buscando clima...';
+            localStorage.removeItem(city.toLowerCase()); // Limpa cache sujo
+            location = await getCoordinates(city);
+            weatherData = await getWeather(location.latitude, location.longitude);
+            // Salva o resultado no cache novo
+            setCache(city, { location, weather: weatherData });
+        }
 
-        const date = new Date(weather.time);
+        const current = weatherData.current;
+        const daily = weatherData.daily;
+
+        const description = getWeatherDescription(current.weather_code);
+        const icon = getWeatherIcon(current.weather_code);
+
+        const date = new Date(current.time);
         const formattedDate = date.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-        const time = date.toLocaleTimeString("pt-BR");
+        const timeString = date.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' });
 
-        toggleTheme(weather.is_day);
+        const todayMax = daily.temperature_2m_max && daily.temperature_2m_max[0] !== undefined ? daily.temperature_2m_max[0].toFixed(0) : '--';
+        const todayMin = daily.temperature_2m_min && daily.temperature_2m_min[0] !== undefined ? daily.temperature_2m_min[0].toFixed(0) : '--';
+
+        toggleTheme(current.is_day);
+
+        let forecastHTML = '<div class="forecast-list"><h3 class="forecast-title">Próximos Dias</h3>';
+        
+        for (let i = 1; i <= 5; i++) {
+            if (!daily.time[i]) break; 
+            const fDate = new Date(daily.time[i]);
+            const userTimezoneOffset = fDate.getTimezoneOffset() * 60000;
+            const adjustedDate = new Date(fDate.getTime() + userTimezoneOffset);
+            
+            const weekdayName = adjustedDate.toLocaleDateString("pt-BR", { weekday: "long" }).replace("-feira", "-feira");
+            const capitalizedWeekday = weekdayName.charAt(0).toUpperCase() + weekdayName.slice(1);
+            const dayMonth = adjustedDate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" });
+            
+            const fMax = daily.temperature_2m_max[i].toFixed(0);
+            const fMin = daily.temperature_2m_min[i].toFixed(0);
+            const fDesc = getWeatherDescription(daily.weathercode[i]);
+            const fIcon = getWeatherIcon(daily.weathercode[i]);
+            
+            const fWind = daily.wind_speed_10m_max[i] !== undefined ? daily.wind_speed_10m_max[i].toFixed(0) : '--';
+            const fPrecip = daily.precipitation_sum[i] !== undefined ? daily.precipitation_sum[i].toFixed(1) : '--';
+
+            forecastHTML += `
+                <div class="forecast-card" onclick="this.classList.toggle('expanded')" style="cursor: pointer;">
+                    <div class="f-main">
+                        <div class="f-date">
+                            <strong>${capitalizedWeekday}</strong>
+                            <span>${dayMonth}</span>
+                        </div>
+                        <div class="f-icon">
+                            <i class="wi ${fIcon}"></i>
+                            <span class="f-desc">${fDesc}</span>
+                        </div>
+                        <div class="f-temp">
+                            <div class="t-max"><span class="arrow-up">▲</span> ${fMax}°</div>
+                            <div class="t-min"><span class="arrow-down">▼</span> ${fMin}°</div>
+                        </div>
+                    </div>
+                    <div class="f-details">
+                        <div class="f-det-item">
+                            <i class="wi wi-strong-wind"></i>
+                            <span>${fWind} km/h</span>
+                        </div>
+                        <div class="f-det-item">
+                            <i class="wi wi-raindrops"></i>
+                            <span>${fPrecip} mm</span>
+                        </div>
+                        <div class="f-det-item hint">
+                            <small>Umidade diária não disp.</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        forecastHTML += '</div>';
 
         result.innerHTML = `
-        <div class="weather-card">
-            <h2>${location.name}, ${location.country}</h2>
-            <p class="date">${formattedDate}<br>${time} (horário local)</p>
-            <div class="weather-icon"><i class="wi ${icon}"></i></div>
-            <p class="temperature">${weather.temperature.toFixed(1)}°C</p>
+        <div class="weather-main-wrapper">
+            <div class="hero-banner">
+                <i class="wi ${icon} hero-icon"></i>
+                <div class="hero-temp">
+                    <span class="curr-temp">${current.temperature_2m.toFixed(0)}°</span>
+                </div>
+            </div>
+            
+            <h2 class="city-name">${location.name}, ${location.country}</h2>
             <p class="description">${description}</p>
+            <p class="date">${formattedDate}<br>${timeString} (horário local)</p>
+
+            <div class="today-max-min">
+                <div class="max-box">
+                    <span class="label">MÁXIMA</span>
+                    <span class="val">${todayMax}°</span>
+                </div>
+                <div class="min-box">
+                    <span class="label">MÍNIMA</span>
+                    <span class="val">${todayMin}°</span>
+                </div>
+            </div>
+
+            <div class="extra-variables">
+                <div class="var-box">
+                    <i class="wi wi-humidity"></i>
+                    <span class="v-label">UMIDADE</span>
+                    <strong class="v-val">${current.relative_humidity_2m}%</strong>
+                </div>
+                <div class="var-box">
+                    <i class="wi wi-strong-wind"></i>
+                    <span class="v-label">VENTO</span>
+                    <strong class="v-val">${current.wind_speed_10m.toFixed(0)} km/h</strong>
+                </div>
+                <div class="var-box">
+                    <i class="wi wi-raindrops"></i>
+                    <span class="v-label">CHUVAS</span>
+                    <strong class="v-val">${current.precipitation.toFixed(0)} mm</strong>
+                </div>
+            </div>
+
+            ${forecastHTML}
         </div>
         `;
 
+        document.body.classList.add('result-shown'); 
     } catch (error) {
         console.error(error);
         if (error.message.includes("Cidade")) showError("Cidade não encontrada.");

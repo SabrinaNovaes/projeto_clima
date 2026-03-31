@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getCoordinates">getCoordinates</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getWeather">getWeather</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getWeatherDescription">getWeatherDescription</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getWeatherIcon">getWeatherIcon</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#showError">showError</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleTheme">toggleTheme</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#validarCidade">validarCidade</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CACHE_DURATION">CACHE_DURATION</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getCache">getCache</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getCoordinates">getCoordinates</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getWeather">getWeather</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getWeatherDescription">getWeatherDescription</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getWeatherIcon">getWeatherIcon</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#setCache">setCache</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#showError">showError</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleTheme">toggleTheme</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#validarCidade">validarCidade</a></span></li>
 </nav>
 
 <div id="main">
@@ -70,17 +70,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Módulo de consulta de clima usando APIs externas (Open-Meteo e Geocoding).
-Contém funções para validar cidade, buscar coordenadas, obter clima atual, gerar descrições e ícones,
-alternar tema dia/noite e exibir mensagens de erro no DOM.
-
-Elementos DOM integrados:
- - Formulário: #weather-form
- - Input cidade: #city-input
- - Resultado: #result
- - Botão Home: #home-btn
-
-Exemplo de uso assíncrono:</div>
+            <div class="description">Módulo de consulta de clima usando APIs externas (Open-Meteo e Geocoding).Contém funções para validar cidade, buscar coordenadas, obter clima atual, gerar descrições e ícones,alternar tema dia/noite e exibir mensagens de erro no DOM.Elementos DOM integrados: - Formulário: #weather-form - Input cidade: #city-input - Resultado: #result - Botão Home: #home-btnExemplo de uso assíncrono:</div>
         
 
         
@@ -130,17 +120,7 @@ Exemplo de uso assíncrono:</div>
         
             <h3>Example</h3>
             
-    <pre class="prettyprint"><code>const cidade = "Rio de Janeiro";
-try {
-  validarCidade(cidade);
-  const location = await getCoordinates(cidade);
-  const weather = await getWeather(location.latitude, location.longitude);
-  const descricao = getWeatherDescription(weather.weathercode);
-  const icone = getWeatherIcon(weather.weathercode);
-  console.log(`Clima em ${location.name}, ${location.country}: ${descricao}, ${weather.temperature}°C`);
-} catch (error) {
-  console.error(error.message);
-}</code></pre>
+    <pre class="prettyprint"><code>const cidade = "Rio de Janeiro";try {  validarCidade(cidade);  const location = await getCoordinates(cidade);  const weather = await getWeather(location.latitude, location.longitude);  const descricao = getWeatherDescription(weather.weathercode);  const icone = getWeatherIcon(weather.weathercode);  console.log(`Clima em ${location.name}, ${location.country}: ${descricao}, ${weather.temperature}°C`);} catch (error) {  console.error(error.message);}</code></pre>
 
         
     
@@ -175,7 +155,7 @@ try {
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Mon Mar 30 2026 23:19:16 GMT-0300 (Horário Padrão de Brasília) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Tue Mar 31 2026 16:18:22 GMT-0300 (Horário Padrão de Brasília) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

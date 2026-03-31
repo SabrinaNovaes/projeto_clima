@@ -56,10 +56,17 @@ Geocoding API
 ✔️ Exibição de card com:
 ```
 Cidade e país
-Temperatura
+Temperatura Atual, Máximas e Mínimas
+Umidade (%), Velocidade do Vento e Precipitação
 Descrição do clima
-Ícone meteorológico
+Ícone meteorológico animado com suporte ao tema
 Data e hora local
+```
+
+✔️ Card Interativo de Previsão Múltipla:
+```
+Previsão para os próximos 5 dias
+Acelerador visual de "Acordeão": Mostra chuvas e ventos detalhados ao expandir os dias
 ```
 
 ✔️ Tema automático:
@@ -142,10 +149,8 @@ start docs/index.html
 
 ## 🔮 Melhorias futuras
 🔎 Autocomplete de cidades <br>
-📅 Previsão de 7 dias <br>
 📱 Responsividade mobile <br>
-⚡ Cache com expiração <br> 
-🎨 Animações avançadas <br> 
+⚡ Evolução do LocalStorage para IndexedDB <br> 
 
 <hr>
 
