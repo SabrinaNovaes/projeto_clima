@@ -144,6 +144,7 @@ start docs/index.html
 ```bash
 https://sabrinanovaes.github.io/projeto_clima/
 ```
+<hr>
 
 ## 🔮 Melhorias futuras
 🔎 Autocomplete de cidades <br>
