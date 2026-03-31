@@ -4,7 +4,8 @@
   "description": "",
   "main": "api.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "docs": "jsdoc -c jsdoc.json"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,9 @@
   },
   "homepage": "https://github.com/SabrinaNovaes/projeto_clima#readme",
   "devDependencies": {
-    "jest": "^30.3.0"
+    "jest": "^30.3.0",
+    "jsdoc": "^4.0.5",
+    "minami": "^1.2.3",
+    "taffydb": "^2.7.3"
   }
 }

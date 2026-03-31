@@ -1,4 +1,45 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>api.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getCoordinates">getCoordinates</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getWeather">getWeather</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getWeatherDescription">getWeatherDescription</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getWeatherIcon">getWeatherIcon</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#showError">showError</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#toggleTheme">toggleTheme</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#validarCidade">validarCidade</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">api.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Módulo de consulta de clima usando APIs externas (Open-Meteo e Geocoding).
  * Contém funções para validar cidade, buscar coordenadas, obter clima atual, gerar descrições e ícones,
  * alternar tema dia/noite e exibir mensagens de erro no DOM.
@@ -35,7 +76,7 @@ const homeBtn = document.getElementById('home-btn');
  * @param {string} message - Mensagem de erro a ser exibida.
  */
 function showError(message) {
-    result.innerHTML = `<span class="error">${message}</span>`;
+    result.innerHTML = `&lt;span class="error">${message}&lt;/span>`;
 }
 
 /**
@@ -55,11 +96,11 @@ function validarCidade(cidade) {
  *
  * @async
  * @param {string} city - Nome da cidade.
- * @returns {Promise<{latitude: number, longitude: number, name: string, country: string}>}
+ * @returns {Promise&lt;{latitude: number, longitude: number, name: string, country: string}>}
  * @throws {Error} Se a conexão falhar, cidade não encontrada ou resposta inválida.
 */
 async function getCoordinates(city) {
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=pt&format=json`;
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&amp;count=1&amp;language=pt&amp;format=json`;
     let res;
     try {
         res = await fetch(url);
@@ -90,11 +131,11 @@ async function getCoordinates(city) {
  * @async
  * @param {number} latitude
  * @param {number} longitude
- *  * @returns {Promise<{latitude: number, longitude: number, name: string, country: string}>}
+ *  * @returns {Promise&lt;{latitude: number, longitude: number, name: string, country: string}>}
  * @throws {Error} Se a conexão falhar, resposta inválida ou dados indisponíveis.
  */
 async function getWeather(latitude, longitude) {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&temperature_unit=celsius&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&amp;longitude=${longitude}&amp;current_weather=true&amp;temperature_unit=celsius&amp;timezone=auto`;
     let res;
     try {
         res = await fetch(url);
@@ -210,7 +251,7 @@ homeBtn.addEventListener("click", () => {
  *
  * @async
  * @param {SubmitEvent} event - Evento de envio do formulário.
- * @returns {Promise<void>}
+ * @returns {Promise&lt;void>}
  * @throws {Error} Se a cidade for inválida ou ocorrer falha de conexão ou dados meteorológicos.
  *
  * @example
@@ -243,13 +284,13 @@ form.addEventListener('submit', async (event) => {
         toggleTheme(weather.is_day);
 
         result.innerHTML = `
-        <div class="weather-card">
-            <h2>${location.name}, ${location.country}</h2>
-            <p class="date">${formattedDate}<br>${time} (horário local)</p>
-            <div class="weather-icon"><i class="wi ${icon}"></i></div>
-            <p class="temperature">${weather.temperature.toFixed(1)}°C</p>
-            <p class="description">${description}</p>
-        </div>
+        &lt;div class="weather-card">
+            &lt;h2>${location.name}, ${location.country}&lt;/h2>
+            &lt;p class="date">${formattedDate}&lt;br>${time} (horário local)&lt;/p>
+            &lt;div class="weather-icon">&lt;i class="wi ${icon}">&lt;/i>&lt;/div>
+            &lt;p class="temperature">${weather.temperature.toFixed(1)}°C&lt;/p>
+            &lt;p class="description">${description}&lt;/p>
+        &lt;/div>
         `;
 
     } catch (error) {
@@ -258,4 +299,22 @@ form.addEventListener('submit', async (event) => {
         else if (error.message.includes("conexão")) showError("Erro de conexão.");
         else showError(error.message);
     }
-});
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Mon Mar 30 2026 23:19:16 GMT-0300 (Horário Padrão de Brasília) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

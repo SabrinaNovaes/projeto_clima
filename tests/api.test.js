@@ -3,96 +3,80 @@
 // Criando a função mock diretamente
 const buscarClima = jest.fn();
 
-describe("Testes da função buscarClima com mock", () => {
+// Funções helpers para reduzir repetição
+const mockSuccess = (dados) => buscarClima.mockResolvedValueOnce(dados);
+const mockError = (mensagem) => buscarClima.mockRejectedValueOnce(new Error(mensagem));
+
+describe("Testes da função buscarClima com mock (otimizado)", () => {
+    const cidades = {
+        valida: "Rio de Janeiro",
+        inexistente: "CidadeInexistente",
+        vazia: "",
+        lenta: "São Paulo",
+        formato: "Belo Horizonte",
+    };
+
     beforeEach(() => {
-        jest.clearAllMocks(); // limpa histórico de chamadas antes de cada teste
+        jest.clearAllMocks();
     });
 
     test("Nome de cidade válido retorna dados meteorológicos", async () => {
-        const cidade = "Rio de Janeiro";
         const dadosMock = { temperatura: 28, descricao: "Ensolarado" };
+        mockSuccess(dadosMock);
 
-        // Simula o retorno da função
-        buscarClima.mockResolvedValueOnce(dadosMock);
-
-        const resultado = await buscarClima(cidade);
+        const resultado = await buscarClima(cidades.valida);
         expect(resultado).toEqual(dadosMock);
         expect(buscarClima).toHaveBeenCalledTimes(1);
-        expect(buscarClima).toHaveBeenCalledWith(cidade);
+        expect(buscarClima).toHaveBeenCalledWith(cidades.valida);
     });
 
     test("Nome de cidade inexistente lança exceção tratada", async () => {
-        const cidade = "CidadeInexistente";
+        mockError("Cidade não encontrada");
 
-        // Simula rejeição da função
-        buscarClima.mockRejectedValueOnce(new Error("Cidade não encontrada"));
-
-        await expect(buscarClima(cidade)).rejects.toThrow("Cidade não encontrada");
-        expect(buscarClima).toHaveBeenCalledWith(cidade);
+        await expect(buscarClima(cidades.inexistente)).rejects.toThrow("Cidade não encontrada");
+        expect(buscarClima).toHaveBeenCalledWith(cidades.inexistente);
     });
 
-    // Entrada vazia
-    test('Entrada vazia retorna erro de validação', async () => {
-        const cidade = '';
+    test("Entrada vazia retorna erro de validação", async () => {
+        mockError("Nome da cidade é obrigatório");
 
-        // Corrigido para retornar Promise rejeitada
-        buscarClima.mockImplementationOnce((cidade) => {
-            if (!cidade) return Promise.reject(new Error('Nome da cidade é obrigatório'));
-            return Promise.resolve({ temperatura: 28, descricao: 'Ensolarado' });
-        });
-
-        await expect(buscarClima(cidade)).rejects.toThrow('Nome da cidade é obrigatório');
-        expect(buscarClima).toHaveBeenCalledWith(cidade);
+        await expect(buscarClima(cidades.vazia)).rejects.toThrow("Nome da cidade é obrigatório");
+        expect(buscarClima).toHaveBeenCalledWith(cidades.vazia);
     });
 
-    test("Falha da API gera resposta adequada (timeout ou erro)", async () => {
-        const cidade = "São Paulo";
+    test("Falha da API gera resposta adequada", async () => {
+        mockError("Erro de comunicação com a API");
 
-        buscarClima.mockRejectedValueOnce(
-            new Error("Erro de comunicação com a API"),
-        );
-
-        await expect(buscarClima(cidade)).rejects.toThrow(
-            "Erro de comunicação com a API",
-        );
-        expect(buscarClima).toHaveBeenCalledWith(cidade);
+        await expect(buscarClima(cidades.lenta)).rejects.toThrow("Erro de comunicação com a API");
+        expect(buscarClima).toHaveBeenCalledWith(cidades.lenta);
     });
 
-    test('Limite de requisições da API excedido', async () => {
-        const cidade = 'Rio de Janeiro';
+    test("Limite de requisições da API excedido", async () => {
+        mockError("Limite de requisições excedido");
 
-        // Simula erro de limite excedido
-        buscarClima.mockRejectedValueOnce(new Error('Limite de requisições excedido'));
-
-        await expect(buscarClima(cidade)).rejects.toThrow('Limite de requisições excedido');
-        expect(buscarClima).toHaveBeenCalledWith(cidade);
+        await expect(buscarClima(cidades.valida)).rejects.toThrow("Limite de requisições excedido");
+        expect(buscarClima).toHaveBeenCalledWith(cidades.valida);
     });
 
-    test('Conexão de rede lenta/instável', async () => {
-        const cidade = 'São Paulo';
-
-        // Simula delay longo na resposta da API
+    test("Conexão de rede lenta/instável", async () => {
+        // Simula delay na resposta
         buscarClima.mockImplementationOnce(() =>
-            new Promise((resolve) => setTimeout(() => resolve({ temperatura: 30, descricao: 'Nublado' }), 3000))
+            new Promise((resolve) =>
+                setTimeout(() => resolve({ temperatura: 30, descricao: "Nublado" }), 3000)
+            )
         );
 
-        const resultado = await buscarClima(cidade);
-        expect(resultado).toEqual({ temperatura: 30, descricao: 'Nublado' });
-        expect(buscarClima).toHaveBeenCalledWith(cidade);
+        const resultado = await buscarClima(cidades.lenta);
+        expect(resultado).toEqual({ temperatura: 30, descricao: "Nublado" });
+        expect(buscarClima).toHaveBeenCalledWith(cidades.lenta);
     });
 
-    test('Mudança inesperada no formato da resposta JSON', async () => {
-        const cidade = 'Belo Horizonte';
+    test("Mudança inesperada no formato da resposta JSON", async () => {
+        mockSuccess({ temp: 25, desc: "Chuvoso" });
 
-        // Simula resposta inesperada (sem campo temperatura)
-        buscarClima.mockResolvedValueOnce({ temp: 25, desc: 'Chuvoso' });
-
-        const resultado = await buscarClima(cidade);
-        // Teste que falha caso o formato esperado não esteja presente
-        expect(resultado).not.toHaveProperty('temperatura');
-        expect(resultado).toHaveProperty('temp');
-        expect(buscarClima).toHaveBeenCalledWith(cidade);
+        const resultado = await buscarClima(cidades.formato);
+        expect(resultado).not.toHaveProperty("temperatura");
+        expect(resultado).toHaveProperty("temp");
+        expect(buscarClima).toHaveBeenCalledWith(cidades.formato);
     });
-
 });
-
