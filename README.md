@@ -1,5 +1,12 @@
 # 🌤️ Projeto Clima
 
+## 🎥 Preview
+
+<p align="center">
+  <img src="./assets/img/preview.gif" alt="preview" width="600"/>
+</p>
+
+<hr>
 
 ## 📖 Descrição
 
@@ -147,11 +154,6 @@ npm run docs
 start docs/index.html
 ```
 <hr> 
-
-## 💡 Exemplo de uso
-
-
-<hr>
 
 ## 🔮 Melhorias futuras
 🔎 Autocomplete de cidades <br>
